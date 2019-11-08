@@ -9,7 +9,7 @@
           <md-field :class="{'md-invalid' : emailEmpty}">
             <md-icon>account_circle</md-icon>
             <label>Email / Username</label>
-            <md-input v-model="user.email" required></md-input>
+            <md-input v-model="user.email" @keydown.enter="handleLogin"></md-input>
             <span class="md-error">Email must be filled</span>
           </md-field>
           <br />
@@ -24,7 +24,7 @@
     </md-card>
     
     <div class="md-layout md-alignment-center-center">
-      <md-button class="md-raised md-primary" @click="handleLogin">Login</md-button>
+      <md-button class="md-raised md-primary" @click="handleLogin" :disabled="btnLoginDisabled">Login</md-button>
     </div>
 
     <!-- footer -->
@@ -49,11 +49,13 @@ export default {
         password: ''
       },
       emailEmpty: false,
-      passwordEmpty: false
+      passwordEmpty: false,
+      btnLoginDisabled: false
     }
   },
   methods: {
     handleLogin(){
+      // validate if user fill email and password
       if(!this.user.email){
         this.emailEmpty = true;
         return;
@@ -68,14 +70,20 @@ export default {
       else{
         this.passwordEmpty = false;
       }
+      // end of validate
 
+    // login process
+    this.btnLoginDisabled = true;
     axios.post(URL.login, JSON.stringify({email: this.user.email, password: this.user.password}))
       .then((res) => {
         console.log(res)
+        this.btnDisabled = false;
       })
       .catch((err) => {
         console.log(err, "Error")
+        this.btnDisabled = false;
       })
+      // end of login process
     }
   }
 }
